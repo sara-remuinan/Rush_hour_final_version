@@ -2,6 +2,8 @@ from game.display import render_board, render_hand
 from game.input_parser import prompt_human_action
 from game.rules import apply_action, get_legal_actions, get_winner, is_terminal
 from game.setup import create_initial_state
+from game.ai import get_best_action
+from game.constants import Player
 
 
 def run_game(seed=None, max_turns=200):
@@ -21,7 +23,13 @@ def run_game(seed=None, max_turns=200):
             turn += 1
             continue
 
-        hand_index, action = prompt_human_action(state, legal_actions)
+        if state.current_player == Player.SILVER:
+            print("AI is thinking...")
+            hand_index, action = get_best_action(state, legal_actions, depth=2)
+            print(f"AI chose: hand {hand_index}, action {action}")
+        else:
+            hand_index, action = prompt_human_action(state, legal_actions)
+
         apply_action(state, hand_index, action)
         turn += 1
 
